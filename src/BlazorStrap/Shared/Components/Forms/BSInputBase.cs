@@ -37,9 +37,13 @@ namespace BlazorStrap.Shared.Components.Forms
         /// <remarks>If set to <see cref="InputType.Select"/> multiple select can be enabled by binding an array to the component.</remarks>
         [Parameter] public InputType InputType { get; set; } = InputType.Text;
 
-      
-        
         /// <summary>
+        /// Custom Parse Error Message
+        /// </summary>
+        [Parameter] public string? ParsingErrorMessage { get; set; }
+
+
+            /// <summary>
         /// Removes default class.
         /// </summary>
         [Parameter] public bool RemoveDefaultClass { get; set; }
@@ -80,8 +84,14 @@ namespace BlazorStrap.Shared.Components.Forms
 
         protected override bool TryParseValueFromString(string? value, out TValue result, [NotNullWhen(false)] out string? validationErrorMessage)
         {
-            return TryParseString<TValue>.ToValue(value, out result, out validationErrorMessage);
+            var res = TryParseString<TValue>.ToValue(value, out result, out validationErrorMessage);
+            if (!res && ParsingErrorMessage is not null)
+            {
+                validationErrorMessage = ParsingErrorMessage;
+            }
+            return res;
         }
+
         // Microsoft
         protected void SetCurrentValueAsStringArray(string?[]? value)
         {
